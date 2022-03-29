@@ -1,15 +1,24 @@
-"""
-This module is an example of a barebones sample data provider for napari.
+from pathlib import Path
 
-It implements the "sample data" specification.
-see: https://napari.org/plugins/stable/guides.html#sample-data
-
-Replace code below according to your needs.
-"""
-from __future__ import annotations
-import numpy
+from skimage import io
+import numpy as np
 
 
 def make_sample_data():
-    """Generates an image"""
-    return numpy.random.rand(512, 512)
+    """
+    Open sample bleaching data.
+
+    This opens low resolution images of mitochondria in living cardiomyocytes.
+    The images have been taken over 47 hours in a 1-hour cycle.
+    """
+    path = Path.cwd()
+
+    image_paths = sorted(
+        list(
+            path.rglob("./data/mito*.png")
+        ), key=lambda x: int(x.stem.split("_")[1])
+    )
+
+    imgs = [io.imread(image_path, as_gray=True) for image_path in image_paths]
+    imgs = np.stack(imgs)
+    return [(imgs, {"name": "Bleaching Mito", "colormap": "red"})]

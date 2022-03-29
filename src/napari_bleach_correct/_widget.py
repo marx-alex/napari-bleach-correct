@@ -1,41 +1,82 @@
-"""
-This module is an example of a barebones QWidget plugin for napari
+from typing import Optional
 
-It implements the Widget specification.
-see: https://napari.org/plugins/stable/guides.html#widgets
-
-Replace code below according to your needs.
-"""
-from qtpy.QtWidgets import QWidget, QHBoxLayout, QPushButton
+from napari.layers import Image
+from napari.types import LayerDataTuple
 from magicgui import magic_factory
 
+from napari_bleach_correct import ratio_correct, exponential_correct, histogram_correct
 
-class ExampleQWidget(QWidget):
-    # your QWidget.__init__ can optionally request the napari viewer instance
-    # in one of two ways:
-    # 1. use a parameter called `napari_viewer`, as done here
-    # 2. use a type annotation of 'napari.viewer.Viewer' for any parameter
-    def __init__(self, napari_viewer):
-        super().__init__()
-        self.viewer = napari_viewer
-
-        btn = QPushButton("Click me!")
-        btn.clicked.connect(self._on_click)
-
-        self.setLayout(QHBoxLayout())
-        self.layout().addWidget(btn)
-
-    def _on_click(self):
-        print("napari has", len(self.viewer.layers), "layers")
+method_dict = {
+    "Ratio": ratio_correct,
+    "Exponential fitting": None,
+    "Histogram matching": None
+}
 
 
-@magic_factory
-def example_magic_widget(img_layer: "napari.layers.Image"):
-    print(f"you have selected {img_layer}")
+@magic_factory(call_button="Correct")
+def ratio_correct_widget(
+        layer: Image,
+        background_intensity: Optional[float] = None
+) -> LayerDataTuple:
+    data = layer.data
+    contrast_limits = layer.contrast_limits
+
+    # correction name
+    name = layer.name + " Corrected (Ratio Method)"
+
+    # store metadata
+    md = layer._metadata
+    md.update({"method": "ratio", "background_intensity": background_intensity})
+
+    corrected = ratio_correct(
+        images=data,
+        contrast_limits=contrast_limits,
+        background_intens=background_intensity)
+
+    return [(corrected, {"metadata": md, "name": name, "colormap": layer.colormap}, layer._type_string)]
 
 
-# Uses the `autogenerate: true` flag in the plugin manifest
-# to indicate it should be wrapped as a magicgui to autogenerate
-# a widget.
-def example_function_widget(img_layer: "napari.layers.Image"):
-    print(f"you have selected {img_layer}")
+@magic_factory(call_button="Correct", method={"choices": ["mono", "bi"]})
+def exponential_correct_widget(
+        layer: Image,
+        method: str = "bi"
+) -> LayerDataTuple:
+    data = layer.data
+    contrast_limits = layer.contrast_limits
+
+    # correction name
+    name = layer.name + " Corrected (Exponential Curve Method)"
+
+    # store metadata
+    md = layer._metadata
+    md.update({"method": "exponential", "curve_type": method})
+
+    corrected = exponential_correct(
+        images=data,
+        contrast_limits=contrast_limits,
+        method=method)
+
+    return [(corrected, {"metadata": md, "name": name, "colormap": layer.colormap}, layer._type_string)]
+
+
+@magic_factory(call_button="Correct", match={"choices": ["first", "neighbor"]})
+def histogram_correct_widget(
+        layer: Image,
+        match: str = "neighbor"
+) -> LayerDataTuple:
+    data = layer.data
+    contrast_limits = layer.contrast_limits
+
+    # correction name
+    name = layer.name + " Corrected (Histogram Matching Method)"
+
+    # store metadata
+    md = layer._metadata
+    md.update({"method": "histogram", "match": match})
+
+    corrected = histogram_correct(
+        images=data,
+        contrast_limits=contrast_limits,
+        match=match)
+
+    return [(corrected, {"metadata": md, "name": name, "colormap": layer.colormap}, layer._type_string)]

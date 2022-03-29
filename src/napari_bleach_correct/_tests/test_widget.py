@@ -1,15 +1,14 @@
-from napari_bleach_correct import ExampleQWidget, example_magic_widget
+from napari_bleach_correct import ratio_correct_widget, exponential_correct_widget, histogram_correct_widget
 import numpy as np
 
-# make_napari_viewer is a pytest fixture that returns a napari viewer object
-# capsys is a pytest fixture that captures stdout and stderr output streams
-def test_example_q_widget(make_napari_viewer, capsys):
+
+def test_ratio_widget(make_napari_viewer, capsys):
     # make viewer and add an image layer using our fixture
     viewer = make_napari_viewer()
     viewer.add_image(np.random.random((100, 100)))
 
     # create our widget, passing in the viewer
-    my_widget = ExampleQWidget(viewer)
+    my_widget = ratio_correct_widget(viewer)
 
     # call our widget method
     my_widget._on_click()
@@ -17,17 +16,35 @@ def test_example_q_widget(make_napari_viewer, capsys):
     # read captured output and check that it's as we expected
     captured = capsys.readouterr()
     assert captured.out == "napari has 1 layers\n"
-    
-def test_example_magic_widget(make_napari_viewer, capsys):
+
+
+def test_exponential_widget(make_napari_viewer, capsys):
+    # make viewer and add an image layer using our fixture
     viewer = make_napari_viewer()
-    layer = viewer.add_image(np.random.random((100, 100)))
+    viewer.add_image(np.random.random((100, 100)))
 
-    # this time, our widget will be a MagicFactory or FunctionGui instance
-    my_widget = example_magic_widget()
+    # create our widget, passing in the viewer
+    my_widget = exponential_correct_widget(viewer)
 
-    # if we "call" this object, it'll execute our function
-    my_widget(viewer.layers[0])
+    # call our widget method
+    my_widget._on_click()
 
     # read captured output and check that it's as we expected
     captured = capsys.readouterr()
-    assert captured.out == f"you have selected {layer}\n"
+    assert captured.out == "napari has 1 layers\n"
+
+
+def test_histogram_widget(make_napari_viewer, capsys):
+    # make viewer and add an image layer using our fixture
+    viewer = make_napari_viewer()
+    viewer.add_image(np.random.random((100, 100)))
+
+    # create our widget, passing in the viewer
+    my_widget = histogram_correct_widget(viewer)
+
+    # call our widget method
+    my_widget._on_click()
+
+    # read captured output and check that it's as we expected
+    captured = capsys.readouterr()
+    assert captured.out == "napari has 1 layers\n"

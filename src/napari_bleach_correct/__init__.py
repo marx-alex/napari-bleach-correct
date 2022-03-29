@@ -1,8 +1,9 @@
 
 __version__ = "0.0.1"
 
+from .ratio import ratio_correct
+from .exponential import exponential_correct
+from .histogram import histogram_correct
 
-from ._reader import napari_get_reader
-from ._writer import write_single_image, write_multiple 
 from ._sample_data import make_sample_data 
-from ._widget import ExampleQWidget, example_magic_widget
+from ._widget import ratio_correct_widget, exponential_correct_widget, histogram_correct_widget
