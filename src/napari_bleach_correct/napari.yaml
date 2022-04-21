@@ -5,23 +5,13 @@ contributions:
     - id: napari-bleach-correct.make_sample_data
       python_name: napari_bleach_correct._sample_data:make_sample_data
       title: Load sample data from napari Bleach Correction
-    - id: napari-bleach-correct.ratio_correct_widget
-      python_name: napari_bleach_correct._widget:ratio_correct_widget
-      title: Bleaching Correction (Ratio Method)
-    - id: napari-bleach-correct.exponential_correct_widget
-      python_name: napari_bleach_correct._widget:exponential_correct_widget
-      title: Bleaching Correction (Exponential Curve Method)
-    - id: napari-bleach-correct.histogram_correct_widget
-      python_name: napari_bleach_correct._widget:histogram_correct_widget
-      title: Bleaching Correction (Histogram Matching Method)
+    - id: napari-bleach-correct.main_widget
+      python_name: napari_bleach_correct._dock_widget:MainWidget
+      title: Bleaching Correction
   sample_data:
     - command: napari-bleach-correct.make_sample_data
       display_name: Bleaching Mito
       key: unique_id.1 
   widgets:
-    - command: napari-bleach-correct.ratio_correct_widget
-      display_name: Bleaching Correction (Ratio Method)
-    - command: napari-bleach-correct.exponential_correct_widget
-      display_name: Bleaching Correction (Exponential Curve Method)
-    - command: napari-bleach-correct.histogram_correct_widget
-      display_name: Bleaching Correction (Histogram Matching Method)
+    - command: napari-bleach-correct.main_widget
+      display_name: Bleaching Correction

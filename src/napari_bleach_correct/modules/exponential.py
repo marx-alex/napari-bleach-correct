@@ -3,6 +3,7 @@ import logging
 
 import numpy as np
 from scipy.optimize import curve_fit
+from napari.types import ImageData
 
 logger = logging.getLogger(__name__)
 logging.basicConfig()
@@ -18,37 +19,16 @@ def bi_exp(x, a, b, c, d):
 
 
 def exponential_correct(
-        images: np.ndarray,
+        images: ImageData,
         contrast_limits: Tuple[int, int],
         method: str = "mono"
-) -> np.ndarray:
-    """
-    Drift estimation of fluorescence signal by fitting the mean intensity to an exponential curve.
-    The image is corrected by the decay in the normalized exponential function.
-    The time intervals between frames should be equal.
-
-    A mono- or a bi-exponential function can be used.
-    Mono-exponential function:
-    .. math::
-        \bar{I}'_i(x,y) = a\euler^{-bi}
-
-    Bi-exponential function:
-    .. math::
-        \bar{I}'_i(x,y) = a\euler^{-bi} + c\euler^{-di}
-
-    :param images: Image stack of shape `N, H, W`.
-    :param contrast_limits: Lower and upper intensity bound.
-    :param method: Type of exponential curve ("mono" or "bi").
-    """
+) -> ImageData:
     # cache image dtype
     dtype = images.dtype
 
-    # scale image between 0 and 1
-    images = images / contrast_limits[1]
-
     assert (
-            len(images.shape) == 3
-    ), f"Expected 3d image stack, instead got {len(images.shape)} dimensions"
+            3 <= len(images.shape) <= 4
+    ), f"Expected 3d or 4d image stack, instead got {len(images.shape)} dimensions"
 
     # choose exponential curve
     avail_methods = ["mono", "bi"]
@@ -63,7 +43,8 @@ def exponential_correct(
 
     # calculate the mean intensity for every frame
     # store the intensity from the first frame
-    I_mean = np.mean(images, axis=(1, 2))
+    axes = tuple([i for i in range(len(images.shape))])
+    I_mean = np.mean(images, axis=axes[1:])
 
     # fit curve
     x_data = np.arange(images.shape[0])
@@ -85,11 +66,14 @@ def exponential_correct(
     # normalize theoretical data
     f = f_ / np.max(f_)
 
-    # multiply every frame by its ratio
-    images = images / f.reshape(-1, 1, 1)
+    # divide every frame by its ratio
+    if len(images.shape) == 3:
+        f = f.reshape(-1, 1, 1)
+    else:
+        f = f.reshape(-1, 1, 1, 1)
+    images = images / f
 
-    # rescale and avoid overflow
-    images = images * contrast_limits[1]
+    # avoid overflow
     images[images < contrast_limits[0]] = contrast_limits[0]
     images[images > contrast_limits[1]] = contrast_limits[1]
     return images.astype(dtype)

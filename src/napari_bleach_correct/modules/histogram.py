@@ -1,38 +1,28 @@
 from typing import Tuple
 
 import numpy as np
+from napari.types import ImageData
 
 
 def histogram_correct(
-        images: np.ndarray,
+        images: ImageData,
         contrast_limits: Tuple[int, int],
         match: str = "first"
-) -> np.ndarray:
-    """
-    Bleaching correction by matching histograms to a reference image.
-
-    The correct pixel values can be calculated by the cumulative distribution function
-    of a frame and its reference frame.
-
-    .. math::
-        p' = CDF_{ref}^{-1}(CDF_i(p))
-
-    References:
-        Miura K. Bleach correction ImageJ plugin for compensating the photobleaching of
-        time-lapse sequences. F1000Res. 2020 Dec 21;9:1494.
-        doi: 10.12688/f1000research.27171.1
-
-    :param images: Image stack of shape `N, H, W`.
-    :param contrast_limits: Lower and upper intensity bound.
-    :param match: Match frame histogram with 'first' our 'neighbor' histogram.
-    """
+) -> ImageData:
     # cache image dtype
     dtype = images.dtype
-    k, m, n = images.shape
 
     assert (
-            len(images.shape) == 3
-    ), f"Expected 3d image stack, instead got {len(images.shape)} dimensions"
+            3 <= len(images.shape) <= 4
+    ), f"Expected 3d or 4d image stack, instead got {len(images.shape)} dimensions"
+
+    if len(images.shape) == 3:
+        k, m, n = images.shape
+        z = None
+        pixel_size = m * n
+    else:
+        k, z, m, n = images.shape
+        pixel_size = z * m * n
 
     avail_match_methods = ["first", "neighbor"]
     assert (
@@ -52,18 +42,21 @@ def histogram_correct(
                 match_ix = i - 1
 
             val, ix, cnt = np.unique(images[i, ...].flatten(), return_inverse=True, return_counts=True)
-            cdf = np.cumsum(cnt) / (m * n)
+            cdf = np.cumsum(cnt) / pixel_size
 
             interpolated = np.interp(cdf, cdfs[match_ix], values[match_ix])
             images[i, ...] = interpolated[ix]
 
         if i == 0 or match == "neighbor":
             val, cnt = np.unique(images[i, ...].flatten(), return_counts=True)
-            cdf = np.cumsum(cnt) / (m * n)
+            cdf = np.cumsum(cnt) / pixel_size
             values.append(val)
             cdfs.append(cdf)
 
-    images = images.reshape(k, m, n)
+    if z is None:
+        images = images.reshape(k, m, n)
+    else:
+        images = images.reshape(k, z, m, n)
     images[images < contrast_limits[0]] = contrast_limits[0]
     images[images > contrast_limits[1]] = contrast_limits[1]
     return images.astype(dtype)
