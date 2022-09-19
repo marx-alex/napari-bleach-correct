@@ -1,6 +1,6 @@
 # napari-bleach-correct
 
-[![License](https://img.shields.io/pypi/l/napari-bleach-correct.svg?color=green)](https://github.com/marx-alex/napari-bleach-correct/blob/main/LICENSE)
+[![License](https://img.shields.io/github/license/marx-alex/napari-bleach-correct)](https://github.com/marx-alex/napari-bleach-correct)
 [![PyPI](https://img.shields.io/pypi/v/napari-bleach-correct.svg?color=green)](https://pypi.org/project/napari-bleach-correct)
 [![Python Version](https://img.shields.io/pypi/pyversions/napari-bleach-correct.svg?color=green)](https://python.org)
 [![tests](https://github.com/marx-alex/napari-bleach-correct/workflows/tests/badge.svg)](https://github.com/marx-alex/napari-bleach-correct/actions)
