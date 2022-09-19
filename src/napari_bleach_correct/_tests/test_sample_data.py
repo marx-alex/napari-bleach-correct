@@ -1,7 +1,9 @@
-# from napari_bleach_correct import make_sample_data
+import numpy as np
+from napari_bleach_correct import make_sample_data
 
-# add your tests here...
 
+def test_sample_data():
+    images = make_sample_data()
 
-def test_something():
-    pass
+    assert isinstance(images, list)
+    assert isinstance(images[0][0], np.ndarray)
