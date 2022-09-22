@@ -102,6 +102,7 @@ class IntensityPlotWidget(QWidget):
                 xaxis=x_data2,
                 yaxis=I_mean2
             )
+
         return data
 
 

@@ -1,5 +1,6 @@
 from typing import Optional
 
+import numpy as np
 from napari.layers import Image
 from napari.types import LayerDataTuple
 from magicgui import magicgui
@@ -176,7 +177,7 @@ def histogram_correct_widget(
     md.update({"method": "histogram", "match": match})
 
     corrected = histogram_correct(
-        images=data,
+        images=np.copy(data),
         contrast_limits=contrast_limits,
         match=match)
 
