@@ -14,8 +14,8 @@ This is the simplest method. Every pixel in a frame is multiplied by the ratio f
 first frame to that of the *i-th* frame.
 
 Assumptions:
-* the mean intensity (*I bar*) is constant through the time-lapse
-* the background fluorescence is the same for every pixel and *i-th* frame
+* the mean intensity is constant through the time-lapse
+* the background fluorescence is the same for every pixel and frame
 
 Parameters:
 * Background Intensity: Must be estimated
@@ -41,6 +41,7 @@ Parameters:
 * Reference Frame: Match the frame's histogram with the first our neighbor frame 
 
 The Histogram Matching method using the neighbor frame as reference is a good start to correct bleaching.
+All methods are described in detail in Miura et al.
 
 ## References
 

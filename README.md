@@ -23,13 +23,11 @@ This is the simplest method. Every pixel in a frame is multiplied by the ratio f
 first frame to that of the *i-th* frame.
 
 Assumptions:
-* the mean intensity (*I bar*) is constant through the time-lapse
-* the background fluorescence is the same for every pixel and *i-th* frame
+* the mean intensity is constant through the time-lapse
+* the background fluorescence is the same for every pixel and frame
 
 Parameters:
 * Background Intensity: Must be estimated
-
-<img src="http://www.sciweavers.org/tex2img.php?eq=I_i%28x%2Cy%29%20%3D%20%5Cfrac%7B%5Cbar%7BI%7D_0%20-%20I_b%7D%7B%5Cbar%7BI%7D_i%20-%20I_b%7D%28I_i%28x%2Cy%29%20-%20I_b%29&bc=White&fc=Black&im=jpg&fs=12&ff=arev&edit=0" align="center" border="0" alt="I_i(x,y) = \frac{\bar{I}_0 - I_b}{\bar{I}_i - I_b}(I_i(x,y) - I_b)" width="232" height="49" />
 
 ### Exponential Curve Fitting
 
@@ -42,12 +40,6 @@ Assumptions:
 Parameters:
 * Exponential Curve: Bleaching can be modelled as a mono- or bi-exponential curve
 
-Mono-exponential function:
-<img src="http://www.sciweavers.org/tex2img.php?eq=%5Cbar%7BI%7D%27_i%28x%2Cy%29%20%3D%20a%5Ceuler%5E%7B-bi%7D&bc=White&fc=Black&im=jpg&fs=12&ff=arev&edit=0" align="center" border="0" alt="\bar{I}'_i(x,y) = a\euler^{-bi}" width="115" height="28" />
-
-Bi-exponential function:
-<img src="http://www.sciweavers.org/tex2img.php?eq=%5Cbar%7BI%7D%27_i%28x%2Cy%29%20%3D%20a%5Ceuler%5E%7B-bi%7D%20%2B%20c%5Ceuler%5E%7B-di%7D&bc=White&fc=Black&im=jpg&fs=12&ff=arev&edit=0" align="center" border="0" alt="\bar{I}'_i(x,y) = a\euler^{-bi} + c\euler^{-di}" width="168" height="28" />
-
 ### Histogram Matching
 
 Bleaching correction by matching histograms to a reference image.
@@ -57,9 +49,8 @@ of a frame and its reference frame. This method introduced by Miura et al.
 Parameters:
 * Reference Frame: Match the frame's histogram with the first our neighbor frame 
 
-<img src="http://www.sciweavers.org/tex2img.php?eq=p%27%20%3D%20CDF_%7Bref%7D%5E%7B-1%7D%28CDF_i%28p%29%29&bc=White&fc=Black&im=jpg&fs=12&ff=arev&edit=0" align="center" border="0" alt="p' = CDF_{ref}^{-1}(CDF_i(p))" width="178" height="28" />
-
 The Histogram Matching method using the neighbor frame as reference is a good start to correct bleaching.
+All methods are described in detail in Miura et al.
 
 ## References
 
