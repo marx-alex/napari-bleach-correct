@@ -49,7 +49,7 @@ of a frame and its reference frame. This method introduced by Miura et al.
 Parameters:
 * Reference Frame: Match the frame's histogram with the first our neighbor frame 
 
-The Histogram Matching method using the neighbor frame as reference is a good start to correct bleaching.
+**The Histogram Matching method using the neighbor frame as reference is a good start to correct bleaching.**
 All methods are described in detail in Miura et al.
 
 ## References
